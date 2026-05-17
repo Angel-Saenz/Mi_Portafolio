@@ -332,6 +332,12 @@
             perspective: 1000px;
         }
 
+        .mobile-only-cv { display: none; }
+
+        @media (max-width: 768px) {
+            .mobile-only-cv { display: block !important; }
+        }
+
         .floating-shapes {
             position: absolute;
             top: 0;
@@ -739,6 +745,7 @@
                 <a href="#inicio">Inicio</a>
                 <a href="#servicios">Soluciones</a>
                 <a href="#curriculum">Curriculum</a>
+                <a href="https://angel-saenz.github.io/Mii_Cv/" target="_blank" class="mobile-only-cv">Mi CV</a>
             </div>
             
             <button class="theme-toggle" id="theme-btn">

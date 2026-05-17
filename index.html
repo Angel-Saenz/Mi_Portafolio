@@ -33,6 +33,20 @@
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
             --nav-bg: rgba(3, 3, 3, 0.7);
+            --grain: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--grain);
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 9999;
         }
 
         body.light-mode {
@@ -54,6 +68,7 @@
 
         html {
             scroll-behavior: smooth;
+            background: #000;
         }
 
         body {
@@ -62,6 +77,7 @@
             line-height: 1.6;
             overflow-x: hidden;
             transition: background-color 0.5s ease, color 0.5s ease;
+            perspective: 2000px; /* Perspectiva para el efecto inmersivo */
         }
 
         /* Contenedor para tsParticles */
@@ -72,6 +88,105 @@
             top: 0;
             left: 0;
             z-index: 1;
+        }
+
+        /* --- CURSOR PERSONALIZADO --- */
+        .custom-cursor {
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-glow {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.15) 0%, transparent 70%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .custom-cursor, .cursor-glow { display: none; }
+        }
+
+        /* --- EFECTO SHIMMER EN TARJETAS --- */
+        .service-card::after, .portfolio-card::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.05),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: 0.8s;
+            pointer-events: none;
+        }
+
+        .service-card:hover::after, .portfolio-card:hover::after {
+            left: 100%;
+            top: 100%;
+        }
+
+        /* --- BOTÓN MAGNÉTICO --- */
+        .btn-main {
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* --- BARRA DE PROGRESO DE SCROLL --- */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            z-index: 10001;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* --- EFECTO TEXTO LÍQUIDO GLOW (HERO) --- */
+        .hero-content h1 span {
+            display: block;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+            filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.4));
+            position: relative;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* --- ENCABEZADOS DE SECCIÓN MAGNÉTICOS --- */
+        .section-header h2 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            background: linear-gradient(to bottom, #fff 50%, #444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
         }
 
         /* --- NAVEGACIÓN --- */
@@ -214,12 +329,42 @@
             background: radial-gradient(circle at 50% 50%, var(--panel-bg) 0%, var(--dark-bg) 100%);
             z-index: 1;
             overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .shape {
+            position: absolute;
+            filter: blur(40px);
+            opacity: 0.3;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transition: transform 0.1s ease-out;
+        }
+
+        .s1 { width: 300px; height: 300px; top: 10%; left: 5%; animation: float 15s infinite alternate; }
+        .s2 { width: 400px; height: 400px; bottom: 10%; right: 5%; animation: float 20s infinite alternate-reverse; }
+        .s3 { width: 200px; height: 200px; top: 40%; left: 50%; animation: float 12s infinite alternate; opacity: 0.2; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, 50px) rotate(15deg); }
         }
 
         .hero-content {
             position: relative;
             z-index: 10;
             padding: 0 20px;
+            transform-style: preserve-3d;
         }
 
         .hero-content h1 {
@@ -557,6 +702,10 @@
 
 <body>
 
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="cursor-glow" id="cursor-glow"></div>
+    <div class="scroll-progress"></div>
+
     <nav>
         <div class="brand-container">
             <div class="logo-symbol">&lt;/&gt;</div>
@@ -587,6 +736,12 @@
 
     <header id="inicio">
         <div id="tsparticles"></div>
+        <!-- Elementos 3D Flotantes de Fondo -->
+        <div class="floating-shapes">
+            <div class="shape s1"></div>
+            <div class="shape s2"></div>
+            <div class="shape s3"></div>
+        </div>
         <div class="hero-content">
             <h1>Desarrollo Y <br><span>Tecnologia</span> a la Medida</h1>
             <p class="hero-tagline">
@@ -657,7 +812,7 @@
                     <span class="portfolio-badge">EXPERIENCIA PROFESIONAL</span>
                     <h3>Mi Curriculum Vitae</h3>
                     <p>Una visión detallada de mis competencias en desarrollo de software, gestión de infraestructura y soluciones tecnológicas aplicadas.</p>
-                    <a href="https://angel-saenz.github.io/Mi-Portafolio/" target="_blank" class="btn-main large-btn">VER MI CURRICULUM</a>
+                    <a href="https://angel-saenz.github.io/Mii_Cv/" target="_blank" class="btn-main large-btn">VER MI CURRICULUM</a>
                 </div>
                 <div class="portfolio-visual">
                     <div class="visual-circle"></div>
@@ -669,7 +824,7 @@
         <footer>
             <p>&copy; 2026 Ing Saenz | Desarrollador. Todos los derechos reservados.</p>
             <p style="margin-top: 10px;">
-                <a href="https://angel-saenz.github.io/Mi-Portafolio/" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: 0.3s; letter-spacing: 1px;">
+                <a href="https://angel-saenz.github.io/Mii_Cv/" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: 0.3s; letter-spacing: 1px;">
                     VER MI CURRICULUM VITAE
                 </a>
             </p>
@@ -769,6 +924,113 @@
               .from("header .btn-main", { duration: 1, scale: 0.8, opacity: 0, ease: "back.out(1.7)" }, "-=0.6");
         });
 
+        // --- BARRA DE PROGRESO DE SCROLL ---
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector(".scroll-progress").style.width = scrolled + "%";
+        });
+
+        // --- ENCABEZADOS MAGNÉTICOS ---
+        const headers = document.querySelectorAll('.section-header h2');
+        headers.forEach(h => {
+            h.addEventListener('mousemove', (e) => {
+                const rect = h.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) * 0.2;
+                const y = (e.clientY - rect.top - rect.height / 2) * 0.2;
+                gsap.to(h, { x: x, y: y, rotateX: -y, rotateY: x, duration: 0.4, ease: "power2.out" });
+            });
+            h.addEventListener('mouseleave', () => {
+                gsap.to(h, { x: 0, y: 0, rotateX: 0, rotateY: 0, duration: 0.6, ease: "elastic.out(1, 0.3)" });
+            });
+        });
+
+        // --- CURSOR PERSONALIZADO Y GLOW ---
+        const cursor = document.getElementById('cursor');
+        const cursorGlow = document.getElementById('cursor-glow');
+
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.1,
+                ease: "power2.out"
+            });
+            gsap.to(cursorGlow, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.5,
+                ease: "power3.out"
+            });
+        });
+
+        // --- EFECTO MAGNÉTICO EN BOTONES ---
+        const magneticBtns = document.querySelectorAll('.btn-main');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                gsap.to(btn, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    scale: 1.05,
+                    duration: 0.3,
+                    ease: "power2.out"
+                });
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, {
+                    x: 0,
+                    y: 0,
+                    scale: 1,
+                    duration: 0.5,
+                    ease: "elastic.out(1, 0.3)"
+                });
+            });
+        });
+
+        // --- EFECTO PARALLAX 3D (MOUSE TRACKING) ---
+        const hero = document.querySelector('header');
+        const shapes = document.querySelectorAll('.shape');
+        const heroContent = document.querySelector('.hero-content');
+
+        hero.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+            // Mover formas de fondo (Parallax suave)
+            shapes.forEach((shape, index) => {
+                const factor = (index + 1) * 20;
+                gsap.to(shape, {
+                    x: x * factor,
+                    y: y * factor,
+                    duration: 1,
+                    ease: "power2.out"
+                });
+            });
+
+            // Mover contenido principal (Contra-parallax para profundidad)
+            gsap.to(heroContent, {
+                x: -x * 30,
+                y: -y * 30,
+                rotateX: -y * 10,
+                rotateY: x * 10,
+                duration: 1.2,
+                ease: "power3.out"
+            });
+        });
+
+        hero.addEventListener('mouseleave', () => {
+            shapes.forEach(shape => {
+                gsap.to(shape, { x: 0, y: 0, duration: 1.5, ease: "elastic.out(1, 0.5)" });
+            });
+            gsap.to(heroContent, { x: 0, y: 0, rotateX: 0, rotateY: 0, duration: 1.5, ease: "elastic.out(1, 0.5)" });
+        });
+
         // Efecto Navbar al hacer Scroll
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
@@ -779,11 +1041,35 @@
             }
         });
 
-        // Revelado de Secciones con ScrollTrigger (Inmersivo)
+        // Revelado de Secciones con ScrollTrigger (Inmersivo y Cinematic)
         const sections = document.querySelectorAll('section');
-        sections.forEach(section => {
+        sections.forEach((section, index) => {
             const header = section.querySelector('.section-header.reveal');
             const cards = section.querySelectorAll('.service-card.reveal, .portfolio-card.reveal');
+
+            // Efecto de inclinación 3D al hacer scroll (Cinematic)
+            gsap.fromTo(section, 
+                { 
+                    rotateX: 15, 
+                    z: -200, 
+                    opacity: 0,
+                    transformOrigin: "top center"
+                },
+                {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 95%",
+                        end: "top 20%",
+                        scrub: 1,
+                        toggleActions: "play none none reverse"
+                    },
+                    rotateX: 0,
+                    z: 0,
+                    opacity: 1,
+                    duration: 1.5,
+                    ease: "power2.out"
+                }
+            );
 
             if (header) {
                 gsap.to(header, {
